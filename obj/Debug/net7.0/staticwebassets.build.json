@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "AerJRRIMvVWukT9oLeKh5+8wtwO6ZsQWdw0mUqfrKdw=",
+  "Source": "EnglishTesterServer",
+  "BasePath": "_content/EnglishTesterServer",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
