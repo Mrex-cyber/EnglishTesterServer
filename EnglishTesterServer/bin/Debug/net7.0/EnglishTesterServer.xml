@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>EnglishTesterServer</name>
+    </assembly>
+    <members>
+        <member name="M:EnglishTesterServer.Controllers.TestController.OnGetTests">
+            <summary>
+            Getting all free tests
+            </summary>
+            <returns>Json list of tests with questions and answers (without right answer)</returns>
+            <remarks>
+            Sample request: 
+            
+                GET /api/tests
+                
+            </remarks>
+            <response code="200" link="">Returns tests</response>
+            <response code="204">If the test list is empty</response>
+        </member>
+        <member name="M:EnglishTesterServer.Controllers.TestController.OnGetUserTests(System.String)">
+            <summary>
+            Getting tests that are allowed to user with this email
+            </summary>
+            <returns>Json list of tests with questions and answers (without right answer)</returns>
+            <remarks>
+            Sample request: 
+            
+                POST /api/tests
+                {
+                    "userEmail": "someemail@gmail.com"
+                }
+                
+            </remarks>
+            <response code="200" link="">Returns tests for some user</response>
+            <response code="204">If the test list is empty</response>
+        </member>
+        <member name="M:EnglishTesterServer.Controllers.TestController.OnGetTestById(System.Int32)">
+            <summary>
+            Getting test by ID
+            </summary>
+            <returns>Test with questions and answers (without right answer)</returns>
+            <remarks>
+            Sample request: 
+            
+                GET /api/tests/{testId}
+                
+            </remarks>
+            <response code="200" link="">Returns test</response>
+            <response code="204">If the test not found</response>
+        </member>
+        <member name="M:EnglishTesterServer.Controllers.TestController.OnPostCheckTestByid(EnglishTesterServer.Controllers.TestController.AnswersForTheTestCheck)">
+            <summary>
+            Checking the test
+            </summary>
+            <returns>Result (in points) for test</returns>
+            <remarks>
+            Sample request: 
+            
+                POST /api/tests/check
+                {
+                    "userEmail": "someemail@gmail.com",
+                    "testId": 1,
+                    "answers": [
+                        {
+                            "id": 1,
+                            "text": "How are you?",
+                            "questionId": 2
+                        }
+                    ]
+                }
+                
+            </remarks>
+            <response code="200" link="">Returns result (number)</response>
+        </member>
+    </members>
+</doc>
