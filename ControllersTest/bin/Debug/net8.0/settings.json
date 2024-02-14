@@ -1,0 +1,3 @@
+{
+  "ConnectionString": "Data Source=(LocalDb)\\MSSQLLocalDB;Initial Catalog=TesterDatabase;"
+}

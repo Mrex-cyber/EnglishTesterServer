@@ -1,0 +1,170 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>EnglishTesterServer</name>
+    </assembly>
+    <members>
+        <member name="M:EnglishTesterServer.Controllers.AdminController.OnPostNewTest(EnglishTesterServer.DAL.Models.Entities.TestEntity)">
+            <summary>
+            Adding new test
+            </summary>
+            <returns>Result of adding</returns>
+            <remarks>
+            Sample request: 
+            
+                POST /tests/new
+                
+                {
+                    text: string,
+                    description: string
+                    answers: [
+                        {
+                            text: string
+                        }
+                    ]
+                }
+                
+            </remarks>
+            <response code="200" link="">Added test</response>
+            <response code="204">If the test not found</response>
+        </member>
+        <member name="M:EnglishTesterServer.Controllers.MainPageController.OnGetAchievements">
+            <summary>
+            Getting achievements
+            </summary>
+            <returns>Json list of achievements</returns>
+            <remarks>
+            Sample request: 
+            
+                GET /api/main/achievements
+                
+            </remarks>
+            <response code="200" link="">Returns achievements</response>
+        </member>
+        <member name="M:EnglishTesterServer.Controllers.MainPageController.OnGetFeedbacks">
+            <summary>
+            Getting feedbacks
+            </summary>
+            <returns>Json list of feedbacks</returns>
+            <remarks>
+            Sample request: 
+            
+                GET /api/main/feedbacks
+                
+            </remarks>
+            <response code="200" link="">Returns feedbacks</response>
+        </member>
+        <member name="M:EnglishTesterServer.Controllers.TestController.OnGetTests">
+            <summary>
+            Getting all free tests
+            </summary>
+            <returns>Json list of tests with questions and answers (without right answer)</returns>
+            <remarks>
+            Sample request: 
+            
+                GET /api/tests
+                
+            </remarks>
+            <response code="200" link="">Returns tests</response>
+            <response code="204">If the test list is empty</response>
+        </member>
+        <member name="M:EnglishTesterServer.Controllers.TestController.OnGetUserTests(System.String)">
+            <summary>
+            Getting tests that are allowed to user with this email
+            </summary>
+            <returns>Json list of tests with questions and answers (without right answer)</returns>
+            <remarks>
+            Sample request: 
+            
+                POST /api/tests
+                {
+                    "someemail@gmail.com"
+                }
+                
+            </remarks>
+            <response code="200" link="">Returns tests for some user</response>
+            <response code="204">If the test list is empty</response>
+        </member>
+        <member name="M:EnglishTesterServer.Controllers.TestController.OnGetTestById(System.Int32)">
+            <summary>
+            Getting test by ID
+            </summary>
+            <returns>Test with questions and answers (without right answer)</returns>
+            <remarks>
+            Sample request: 
+            
+                GET /api/tests/{testId}
+                
+            </remarks>
+            <response code="200" link="">Returns test</response>
+            <response code="204">If the test not found</response>
+        </member>
+        <member name="M:EnglishTesterServer.Controllers.TestController.OnPostCheckTestByid(EnglishTesterServer.Controllers.TestController.AnswersForTheTestCheck)">
+            <summary>
+            Checking the test
+            </summary>
+            <returns>Result (in points) for test</returns>
+            <remarks>
+            Sample request: 
+            
+                POST /api/tests/check
+                {
+                    "userEmail": "someemail@gmail.com",
+                    "testId": 1,
+                    "answers": [
+                        {
+                            "id": 1,
+                            "text": "How are you?",
+                            "questionId": 2
+                        }
+                    ]
+                }
+                
+            </remarks>
+            <response code="200" link="">Returns result (number)</response>
+        </member>
+        <member name="M:EnglishTesterServer.Controllers.UserController.SignIn(EnglishTesterServer.DAL.Models.Models.UserCredentialsModel)">
+            <summary>
+            Signing in
+            </summary>
+            <returns>User token and email</returns>
+            <remarks>
+            Sample request: 
+            
+                POST /api/user/signin
+                {
+                    "firstName": null, 
+                    "lastName": null, 
+                    "email": "someemail@gmail.com", 
+                    "password": "key12345"
+                }
+                
+            </remarks>
+            <response code="200" link="">Returns tests for some user</response>
+            <response code="204">The user was not found</response>
+            <response code="400">Request is null</response>
+            <response code="409">Email or password are incorrect</response>
+        </member>
+        <member name="M:EnglishTesterServer.Controllers.UserController.SignUp(EnglishTesterServer.DAL.Models.Entities.UserEntity)">
+            <summary>
+            Registrating user
+            </summary>
+            <returns>Successfull message</returns>
+            <remarks>
+            Sample request: 
+            
+                POST /api/user/signup
+                {
+                    "firstName": "Tom", 
+                    "lastName": "Ford", 
+                    "email": "someemail@gmail.com", 
+                    "password": "key12345"
+                }
+                
+            </remarks>
+            <response code="200" link="">Registered successfully</response>
+            <response code="400">Request is null</response>
+            <response code="409">Email or password are incorrect</response>
+        </member>
+    </members>
+</doc>

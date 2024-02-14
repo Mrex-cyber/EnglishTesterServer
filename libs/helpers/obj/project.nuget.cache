@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "DMsvHoJKGXlJ5aY8aeWHxsaYNBNvR8VJw3h4qHkkEGpIMPrtDeIa/OHgsfC9F/bDyVqnuz21D4JSjKV67ADvtQ==",
+  "success": true,
+  "projectFilePath": "D:\\Pet-projects\\NETAngular\\Tester\\EnglishTesterServer\\libs\\helpers\\Sys.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\rabin\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}
