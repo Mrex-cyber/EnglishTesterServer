@@ -231,10 +231,6 @@ D:\Pet-projects\NETAngular\Tester\EnglishTesterServer\EnglishTesterServer\bin\De
 D:\Pet-projects\NETAngular\Tester\EnglishTesterServer\EnglishTesterServer\bin\Debug\net7.0\runtimes\win-x86\native\sni.dll
 D:\Pet-projects\NETAngular\Tester\EnglishTesterServer\EnglishTesterServer\bin\Debug\net7.0\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
 D:\Pet-projects\NETAngular\Tester\EnglishTesterServer\EnglishTesterServer\bin\Debug\net7.0\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll
-D:\Pet-projects\NETAngular\Tester\EnglishTesterServer\EnglishTesterServer\bin\Debug\net7.0\Connection.dll
-D:\Pet-projects\NETAngular\Tester\EnglishTesterServer\EnglishTesterServer\bin\Debug\net7.0\Sys.dll
-D:\Pet-projects\NETAngular\Tester\EnglishTesterServer\EnglishTesterServer\bin\Debug\net7.0\Connection.pdb
-D:\Pet-projects\NETAngular\Tester\EnglishTesterServer\EnglishTesterServer\bin\Debug\net7.0\Sys.pdb
 D:\Pet-projects\NETAngular\Tester\EnglishTesterServer\EnglishTesterServer\obj\Debug\net7.0\EnglishTesterServer.csproj.AssemblyReference.cache
 D:\Pet-projects\NETAngular\Tester\EnglishTesterServer\EnglishTesterServer\obj\Debug\net7.0\EnglishTesterServer.GeneratedMSBuildEditorConfig.editorconfig
 D:\Pet-projects\NETAngular\Tester\EnglishTesterServer\EnglishTesterServer\obj\Debug\net7.0\EnglishTesterServer.AssemblyInfoInputs.cache
