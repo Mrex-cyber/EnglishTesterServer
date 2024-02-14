@@ -1,5 +1,4 @@
-﻿using EnglishTesterServer.Application.Models;
-using EnglishTesterServer.DAL.Models.DTO.Main_Page;
+﻿using EnglishTesterServer.DAL.Models.DTO.Main_Page;
 
 namespace EnglishTesterServer.DAL.Repositories.Main_Page
 {

@@ -1,15 +1,13 @@
-﻿using EnglishTesterServer.Application.Models;
-using EnglishTesterServer.DAL.Models.Relationships;
+﻿using EnglishTesterServer.DAL.Models.Entities;
+using EnglishTesterServer.DAL.Models.Entities.Relationships;
 using static EnglishTesterServer.Controllers.TestController;
 
 namespace EnglishTesterServer.DAL.Repositories.Tests
 {
-    public interface ITestRepository : IDisposable
+    public interface ITestRepository : ICrud<TestEntity>, IDisposable
     {
-        IEnumerable<Test> GetCommonTests();
-        IEnumerable<Test> GetUserTests(string userEmail);
-        Test? GetTestById(int testId);
-        UserToTest CheckTestById(AnswersForTheTestCheck answers);
-        void Save();
+
+        IEnumerable<TestEntity> GetUserTests(string userEmail);
+        UserToTest? CheckTestById(string userEmail, int testId, AnswerVariantEntity[] answers);
     }
 }

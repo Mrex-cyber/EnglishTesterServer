@@ -1,31 +1,17 @@
-﻿using EnglishTesterServer.Application.Commands.Questions;
-using EnglishTesterServer.Application.Handlers.Questions;
-using EnglishTesterServer.Application.Models;
-using EnglishTesterServer.Application.Queries.Questions;
-using EnglishTesterServer.Application.Queries.Tests;
-using MediatR;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
-using static EnglishTesterServer.Controllers.UserController;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using EnglishTesterServer.DAL.Repositories.Tests;
+using EnglishTesterServer.DAL.UnitsOfWork;
+using EnglishTesterServer.DAL.Models.Entities;
 
 namespace EnglishTesterServer.Controllers
 {
     [Authorize]
     public class TestController : Controller
     {
-        private ITestRepository _testRepository;
+        private UnitOfWorkPlatform unitOfWork = new UnitOfWorkPlatform();
 
-        //public TestController()
-        //{
-        //    this._testRepository = new TestRepository(new PlatformContext());
-        //}
-        public TestController(ITestRepository testRepository)
-        {
-            this._testRepository = testRepository;
-        }
+        public TestController() { }
 
         /// <summary>
         /// Getting all free tests
@@ -43,7 +29,7 @@ namespace EnglishTesterServer.Controllers
         [AllowAnonymous]
         public IResult OnGetTests()
         {
-            var commonTests = _testRepository.GetCommonTests();
+            var commonTests = unitOfWork.TestRepository.GetEntities();
 
             if (commonTests.Count() == 0)
             {
@@ -70,7 +56,7 @@ namespace EnglishTesterServer.Controllers
         [HttpPost("/api/tests")]
         public IResult OnGetUserTests([FromBody] string userEmail)
         {
-            var userTests = _testRepository.GetUserTests(userEmail);
+            var userTests = unitOfWork.TestRepository.GetUserTests(userEmail);
 
             if (userTests.Count() == 0)
             {
@@ -95,7 +81,7 @@ namespace EnglishTesterServer.Controllers
         [HttpGet("/api/tests/{testId}")]
         public IResult OnGetTestById(int testId)
         {
-            var test = _testRepository.GetTestById(testId);
+            var test = unitOfWork.TestRepository.GetEntityById(testId);
 
             if (test is null)
             {
@@ -131,15 +117,24 @@ namespace EnglishTesterServer.Controllers
         [HttpPost("/api/tests/check")]
         public IResult OnPostCheckTestByid([FromBody] AnswersForTheTestCheck testData)
         {
-            int result = _testRepository.CheckTestById(testData).Result;
-            _testRepository.Save();
+            try
+            {
+                int result = unitOfWork.TestRepository.CheckTestById(testData.userEmail, testData.testId, testData.answers).Result;
+                unitOfWork.Save();
 
-            return Results.Json(result);
+                return Results.Json(result);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return Results.Json(ex.Message);
+            }
+
         }
-        public record AnswersForTheTestCheck(string userEmail, int testId, AnswerVariant[] answers);
+        public record AnswersForTheTestCheck(string userEmail, int testId, AnswerVariantEntity[] answers);
         protected override void Dispose(bool disposing)
         {
-            _testRepository.Dispose();
+            unitOfWork.Dispose();
             base.Dispose(disposing);
         }
 

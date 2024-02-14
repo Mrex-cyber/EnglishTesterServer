@@ -1,5 +1,5 @@
-﻿using EnglishTesterServer.Application.Models;
-using EnglishTesterServer.DAL.Models.Relationships;
+﻿using EnglishTesterServer.DAL.Models.Entities;
+using EnglishTesterServer.DAL.Models.Entities.Relationships;
 using Microsoft.EntityFrameworkCore;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -8,10 +8,10 @@ namespace EnglishTesterServer.DAL
 #pragma warning disable CS1591
     public class PlatformContext : DbContext
     {
-        public DbSet<User> Users { get; set; } = null!;
-        public DbSet<Test> Tests { get; set; } = null!;
-        public DbSet<Question> Questions { get; set; } = null!;
-        public DbSet<AnswerVariant> Answers { get; set; } = null!;
+        public DbSet<UserEntity> Users { get; set; } = null!;
+        public DbSet<TestEntity> Tests { get; set; } = null!;
+        public DbSet<QuestionEntity> Questions { get; set; } = null!;
+        public DbSet<AnswerVariantEntity> Answers { get; set; } = null!;
         public DbSet<QuestionToAnswer> RelQuestionToAnswer { get; set; } = null!;
         public DbSet<TestToQuestion> RelTestToQuestion { get; set; } = null!;
         public DbSet<UserToTest> RelUserToTest { get; set; } = null!;
@@ -28,13 +28,13 @@ namespace EnglishTesterServer.DAL
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.Entity<User>()
+            builder.Entity<UserEntity>()
                 .ToTable("obj_users");
-            builder.Entity<Test>()
+            builder.Entity<TestEntity>()
                 .ToTable("obj_tests");
-            builder.Entity<Question>()
+            builder.Entity<QuestionEntity>()
                 .ToTable("obj_questions");
-            builder.Entity<AnswerVariant>()
+            builder.Entity<AnswerVariantEntity>()
                 .ToTable("obj_answers");
 
             builder.Entity<QuestionToAnswer>()
@@ -44,12 +44,12 @@ namespace EnglishTesterServer.DAL
             builder.Entity<UserToTest>()
                 .ToTable("rel_user_test");
 
-            builder.Entity<Test>()
+            builder.Entity<TestEntity>()
                 .HasMany(t => t.Questions)
                 .WithMany(q => q.Tests)
                 .UsingEntity<TestToQuestion>();
 
-            builder.Entity<Question>()
+            builder.Entity<QuestionEntity>()
                 .HasMany(q => q.Answers)
                 .WithMany(a => a.Questions)
                 .UsingEntity<QuestionToAnswer>();

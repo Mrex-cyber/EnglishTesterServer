@@ -1,7 +1,6 @@
-﻿using EnglishTesterServer.Application.Models;
-using EnglishTesterServer.DAL.Models.Relationships;
+﻿using EnglishTesterServer.DAL.Models.Entities;
+using EnglishTesterServer.DAL.Models.Entities.Relationships;
 using Microsoft.EntityFrameworkCore;
-using static EnglishTesterServer.Controllers.TestController;
 
 namespace EnglishTesterServer.DAL.Repositories.Tests
 {
@@ -12,10 +11,12 @@ namespace EnglishTesterServer.DAL.Repositories.Tests
         {
             _context = context;
         }
-        public IEnumerable<Test> GetCommonTests()
+
+        public IEnumerable<TestEntity> GetEntities()
         {
+
             var tests = _context.Tests
-                .Where(t => t.isFree)
+                .Where(t => t.IsFree)
                 .Include(t => t.Questions)
                     .ThenInclude(q => q.Answers)
                 .ToList();
@@ -26,6 +27,8 @@ namespace EnglishTesterServer.DAL.Repositories.Tests
                 {
                     foreach (var answer in question.Answers)
                     {
+                        answer.QuestionId = question.Id;
+                        answer.IsRight = false;
                         answer.Questions.Clear();
                     }
                     question.Tests.Clear();
@@ -35,75 +38,167 @@ namespace EnglishTesterServer.DAL.Repositories.Tests
 
             return tests;
         }
-        public IEnumerable<Test> GetUserTests(string userEmail)
-        {
-            return from test in _context.Tests
-                   join relUserToTest in _context.RelUserToTest
-                       on test.Id equals relUserToTest.TestId
-                   join user in _context.Users
-                       on relUserToTest.UserId equals user.id
-                   join relTestToQuestion in _context.RelTestToQuestion
-                       on test.Id equals relTestToQuestion.TestId
-                   join questions in _context.Questions
-                       on relTestToQuestion.QuestionId equals questions.Id
-                   where user.Email == userEmail && !test.isFree
-                   select test;
-        }
 
-        public Test? GetTestById(int testId)
+        public IEnumerable<TestEntity> GetUserTests(string userEmail)
         {
-            return _context.Tests.Find(testId);
-        }
+            List<TestEntity> allTests = GetEntities().ToList();
 
-        public void Save()
-        {
-            _context.SaveChanges();
-        }
+            var testIds = from rel in _context.RelUserToTest
+                                   join user in _context.Users
+                                        on rel.UserId equals user.id
+                                   where user.Email == userEmail
+                                   select rel.TestId;
 
-        public UserToTest CheckTestById(AnswersForTheTestCheck answers)
-        {
-            var userToTestList = from relUserToTest in _context.RelUserToTest
-                                 join test in _context.Tests
-                                      on relUserToTest.TestId equals test.Id
-                                 join user in _context.Users
-                                      on relUserToTest.UserId equals user.id
-                                 where test.Id == answers.testId && user.Email == answers.userEmail
-                                 select relUserToTest;
-            if (userToTestList is null || userToTestList.Count() == 0)
+            var userTests = _context.Tests
+                .Where(t => t.IsFree && testIds.Contains(t.Id))
+                .Include(t => t.Questions)
+                    .ThenInclude(q => q.Answers)
+                .ToList();           
+
+            foreach (var test in userTests)
             {
-                throw new ArgumentNullException(nameof(userToTestList));
-            }
-
-            UserToTest userTest = userToTestList.First();
-
-            int result = 0;
-
-            List<AnswerVariant> rightAnswers = new List<AnswerVariant>();
-
-            for (int i = 0; i < answers.answers.Length; i++)
-            {
-                var variant = from answer in _context.Answers
-                              where answer.QuestionId == answers.answers[i].QuestionId
-                              select answer;
-
-                if (variant is not null)
+                foreach (var question in test.Questions)
                 {
-                    rightAnswers.Add(variant.First());
+                    foreach (var answer in question.Answers)
+                    {
+                        answer.QuestionId = question.Id;
+                        answer.IsRight = false;
+                        answer.Questions.Clear();
+                    }
+                    question.Tests.Clear();
                 }
             }
 
-            foreach (AnswerVariant rightAnswer in rightAnswers)
+            allTests.AddRange(userTests);
+
+            return allTests;
+        }
+
+        public bool AddEntity(TestEntity newTest)
+        {
+            try
             {
-                if (answers.answers.Where(a => a.QuestionId == rightAnswer.QuestionId && a.Id == rightAnswer.Id).Count() > 0)
+                _context.Add(newTest);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+        }
+        public bool UpdatedEntity(TestEntity test)
+        {
+            return true;
+        }
+        public bool RemoveEntity(int id)
+        {
+            return true;
+        }
+        public TestEntity? GetEntityById(int id)
+        {
+            return _context.Tests.Find(id);
+        }
+        public UserToTest? CheckTestById(string userEmail, int testId, AnswerVariantEntity[] userAnswers)
+        {
+            RightAnswerVariantEntity[] rightAnswers = GetAllRightAnswersForQuestions(userAnswers);
+
+            int result = CalculatePoints(userAnswers, rightAnswers);
+
+            return GetResultAndSave(userEmail, testId, result);
+        }
+
+        private RightAnswerVariantEntity[] GetAllRightAnswersForQuestions(AnswerVariantEntity[] userAnswers)
+        {
+            RightAnswerVariantEntity[] rightAnswers = new RightAnswerVariantEntity[userAnswers.Length];
+
+            for (int i = 0; i < userAnswers.Length; i++)
+            {
+                RightAnswerVariantEntity currentAnswer = userAnswers[i];
+
+                var variant = from answer in _context.Answers
+                              join questionToAnswer in _context.RelQuestionToAnswer
+                                on answer.Id equals questionToAnswer.AnswerId
+                              join questions in _context.Questions
+                                on questionToAnswer.QuestionId equals questions.Id
+                              where answer.IsRight == true
+                                && questions.Id == currentAnswer.QuestionId
+                              select new RightAnswerVariantEntity()
+                              {
+                                  Id = answer.Id,
+                                  Text = answer.Text,
+                                  QuestionId = currentAnswer.QuestionId
+                              };
+
+                if (variant is not null)
+                {
+                    rightAnswers[i] = variant.First();
+                }
+            }
+
+            return rightAnswers;
+        }        
+
+        private UserToTest GetResultAndSave(string userEmail, int testId, int result)
+        {
+            try
+            {
+                var userToTestField = from userToTest in _context.RelUserToTest
+                                      join users in _context.Users
+                                         on userToTest.UserId equals users.id
+                                      where userToTest.TestId == testId
+                                         && users.Email == userEmail
+                                      select userToTest;
+
+                UserToTest resultObject = userToTestField.First();
+
+                if (WriteResultToDB(ref resultObject, result))
+                {
+                    return resultObject;
+                }
+                else throw new Exception("Writing to DB was canceled");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+        }
+
+        private int CalculatePoints(AnswerVariantEntity[] userAnswers, RightAnswerVariantEntity[] rightAnswers)
+        {
+            int result = 0;
+
+            foreach (RightAnswerVariantEntity rightAnswer in rightAnswers)
+            {
+                if (userAnswers.Where(a => a.QuestionId == rightAnswer.QuestionId && a.Id == rightAnswer.Id).Count() > 0)
                 {
                     result++;
                 }
             }
 
-            userTest.Result = result;
-            Save();
+            return result;
+        }
 
-            return userTest;
+        private bool WriteResultToDB(ref UserToTest resultObject, int result)
+        {
+            try
+            {
+                resultObject.Result = result;
+                Save();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+        }
+
+        public void Save()
+        {
+            _context.SaveChanges();
         }
 
         private bool disposed = false;
@@ -123,6 +218,6 @@ namespace EnglishTesterServer.DAL.Repositories.Tests
         {
             Dispose(true);
             GC.SuppressFinalize(this);
-        }
+        }        
     }
 }

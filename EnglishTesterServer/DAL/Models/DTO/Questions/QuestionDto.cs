@@ -1,5 +1,5 @@
-﻿using EnglishTesterServer.Application.Models;
-using EnglishTesterServer.DAL.Models.DTO.Answers;
+﻿using EnglishTesterServer.DAL.Models.DTO.Answers;
+using EnglishTesterServer.DAL.Models.Entities;
 using Newtonsoft.Json;
 using System.Data;
 
@@ -13,7 +13,7 @@ namespace EnglishTesterServer.DAL.Models.DTO.Questions
             Id = id;
             Text = text;
         }
-        public static implicit operator QuestionDto(Question question)
+        public static implicit operator QuestionDto(QuestionEntity question)
         {
             return new QuestionDto
             {

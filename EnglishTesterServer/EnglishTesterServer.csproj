@@ -30,15 +30,4 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\libs\Connection\Connection.csproj" />
-    <ProjectReference Include="..\libs\helpers\Sys.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Application\Commands\Tests\" />
-    <Folder Include="Application\Interfaces\" />
-    <Folder Include="DAL\Repositories\User\" />
-  </ItemGroup>
-
 </Project>

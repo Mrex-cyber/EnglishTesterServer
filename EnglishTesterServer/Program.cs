@@ -1,13 +1,10 @@
-﻿using EnglishTesterServer.Application.Handlers;
-using EnglishTesterServer.Application.Models.Program;
-using EnglishTesterServer.Auth;
+﻿using EnglishTesterServer.Auth;
 using EnglishTesterServer.DAL;
+using EnglishTesterServer.DAL.Models.Models.Program;
 using EnglishTesterServer.DAL.Repositories.Main_Page;
 using EnglishTesterServer.DAL.Repositories.Tests;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 

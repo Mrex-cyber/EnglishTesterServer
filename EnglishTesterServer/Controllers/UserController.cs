@@ -1,39 +1,68 @@
-﻿using EnglishTesterServer.Application.Commands.Users;
-using EnglishTesterServer.Application.Handlers;
-using EnglishTesterServer.Application.Models;
-using EnglishTesterServer.Application.Queries.User;
-using EnglishTesterServer.Application.Validators;
-using EnglishTesterServer.Auth;
-using MediatR;
+﻿using EnglishTesterServer.DAL.Models.Entities;
+using EnglishTesterServer.DAL.Models.Models;
+using EnglishTesterServer.DAL.UnitsOfWork;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text.Json;
 namespace EnglishTesterServer.Controllers
 {
     public class UserController : Controller
     {
-        private readonly IMediator _mediator;
+        private UnitOfWorkPlatform unitOfWork = new UnitOfWorkPlatform();
 
-        public UserController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
+        public UserController() { }
 
+        /// <summary>
+        /// Signing in
+        /// </summary>
+        /// <returns>User token and email</returns>
+        /// <remarks>
+        /// Sample request: 
+        /// 
+        ///     POST /api/user/signin
+        ///     {
+        ///         "firstName": null, 
+        ///         "lastName": null, 
+        ///         "email": "someemail@gmail.com", 
+        ///         "password": "key12345"
+        ///     }
+        ///     
+        /// </remarks>
+        /// <response code="200" link="">Returns tests for some user</response>
+        /// <response code="204">The user was not found</response>
+        /// <response code="400">Request is null</response>
+        /// <response code="409">Email or password are incorrect</response>
         [HttpPost("/api/user/signin")]
-        public async Task<IResult> SignIn([FromBody]UserCredentials credentials)
+        public async Task<IResult> SignIn([FromBody]UserCredentialsModel credentials)
         {
-            GetUserQuery query = new GetUserQuery(credentials);
-            
-            return await _mediator.Send(query);
-        }
-        [HttpPost("/api/user/signup")]
-        public async Task<IResult> SignUp([FromBody] UserCredentials credentials)
-        {
-            InsertUserCommand command = new InsertUserCommand(credentials);
+            UserEntity user = unitOfWork.UserRepository.GetModelByCredentials(credentials);
 
-            return await _mediator.Send(command);
+            return Results.Json(user);
+        }
+
+        /// <summary>
+        /// Registrating user
+        /// </summary>
+        /// <returns>Successfull message</returns>
+        /// <remarks>
+        /// Sample request: 
+        /// 
+        ///     POST /api/user/signup
+        ///     {
+        ///         "firstName": "Tom", 
+        ///         "lastName": "Ford", 
+        ///         "email": "someemail@gmail.com", 
+        ///         "password": "key12345"
+        ///     }
+        ///     
+        /// </remarks>
+        /// <response code="200" link="">Registered successfully</response>
+        /// <response code="400">Request is null</response>
+        /// <response code="409">Email or password are incorrect</response>
+        [HttpPost("/api/user/signup")]
+        public async Task<IResult> SignUp([FromBody] UserEntity userData)
+        {
+            bool result = unitOfWork.UserRepository.AddEntity(userData);
+
+            return Results.Json(result);
         }
 
     }

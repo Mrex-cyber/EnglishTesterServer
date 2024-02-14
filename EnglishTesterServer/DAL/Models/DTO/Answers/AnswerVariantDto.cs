@@ -1,4 +1,4 @@
-﻿using EnglishTesterServer.Application.Models;
+﻿using EnglishTesterServer.DAL.Models.Entities;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
@@ -19,7 +19,7 @@ namespace EnglishTesterServer.DAL.Models.DTO.Answers
         [NotMapped]
         public int QuestionId { get; set; }
         public AnswerVariantDto() { }
-        public static implicit operator AnswerVariantDto(AnswerVariant answer)
+        public static implicit operator AnswerVariantDto(AnswerVariantEntity answer)
         {
             return new AnswerVariantDto
             {

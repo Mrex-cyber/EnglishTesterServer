@@ -1,4 +1,4 @@
-﻿using EnglishTesterServer.Application.Models;
+﻿using EnglishTesterServer.DAL.Models.Entities;
 using Newtonsoft.Json;
 
 namespace EnglishTesterServer.DAL.Models.DTO.Tests
@@ -12,7 +12,7 @@ namespace EnglishTesterServer.DAL.Models.DTO.Tests
             Title = title;
             Description = description;
         }
-        public static implicit operator TestDto(Test test)
+        public static implicit operator TestDto(TestEntity test)
         {
             return new TestDto
             {

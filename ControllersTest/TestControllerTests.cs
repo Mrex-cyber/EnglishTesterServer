@@ -1,5 +1,5 @@
-using EnglishTesterServer.Application.Models;
 using EnglishTesterServer.Controllers;
+using EnglishTesterServer.DAL.Models.Entities;
 using EnglishTesterServer.DAL.Repositories.Tests;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -21,7 +21,7 @@ namespace ControllersTest
             var mockRepo = new Mock<ITestRepository>();
 
             mockRepo.Setup(repo => repo.GetTestById(testId))
-                .Returns((Test)null);
+                .Returns((TestEntity)null);
 
             var controller = new TestController(mockRepo.Object);
 
@@ -41,10 +41,10 @@ namespace ControllersTest
             var mockRepo = new Mock<ITestRepository>();
 
             mockRepo.Setup(repo => repo.GetUserTests(userEmail))
-                .Returns(new Test[]
+                .Returns(new TestEntity[]
                 {
-                    new Test(),
-                    new Test()
+                    new TestEntity(),
+                    new TestEntity()
                 });
 
             var controller = new TestController(mockRepo.Object);
@@ -53,7 +53,7 @@ namespace ControllersTest
             var result = controller.OnGetUserTests(userEmail);
 
             // Assert
-            Assert.IsType<JsonHttpResult<IEnumerable<Test>>>(result);
+            Assert.IsType<JsonHttpResult<IEnumerable<TestEntity>>>(result);
         }
     }
 }
